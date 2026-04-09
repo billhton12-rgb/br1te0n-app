@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>br1te0n app | 브라이튼</title>
+    <title>br1te0n | Smart AI Notes</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Gochi+Hand&family=Nanum+Pen+Script&display=swap" rel="stylesheet">
 </head>
@@ -12,60 +12,78 @@
     <div class="app-container">
         <header>
             <h1 class="logo">br1te0n</h1>
-            <p class="slogan">Smart Notes, Simplified Study. <br> <span class="kr-text">스마트한 노트, 간편한 학습.</span></p>
+            <p class="slogan">Real-Time AI Study Assistant<br><span class="kr-text">실시간 AI 학습 도우미</span></p>
         </header>
 
         <main>
+            <div id="setupSection" style="margin-bottom: 20px;">
+                <input type="password" id="apiKey" placeholder="Enter Gemini API Key..." style="width: 100%;">
+                <p style="font-size: 10px; color: #666; margin-top: 5px;">*Your key is stored locally in your browser.</p>
+            </div>
+
             <div class="input-section">
-                <input type="text" id="linkInput" placeholder="Paste link here... / 링크를 붙여넣으세요...">
+                <input type="text" id="linkInput" placeholder="Paste link or topic here...">
                 <button id="summarizeBtn">Generate Notes / 노트 생성</button>
             </div>
 
             <div class="loader" id="loader">
                 <div class="spinner"></div>
-                <p>Analyzing and simplifying... <br> <span class="kr-text">분석 및 요약 중... 잠시만 기다려 주세요.</span></p>
+                <p>Gemini is thinking... <br> <span class="kr-text">AI가 분석 중입니다...</span></p>
             </div>
 
             <div class="notes-section" id="notesSection">
-                <h2>Study Notes / 학습 노트:</h2>
+                <h2>Notes for You / 당신을 위한 노트:</h2>
                 <div class="paper">
                     <div class="lines"></div>
-                    <div class="content" id="notesContent">
-                        Hello! Paste a link to get student-friendly notes here. <br>
-                        <span class="kr-text">안녕하세요! 링크를 붙여넣으면 학생용 노트를 여기서 확인할 수 있습니다.</span>
-                    </div>
-                </div>
-                <div class="action-buttons">
-                    <button id="copyBtn" class="secondary-btn">Copy / 복사하기</button>
+                    <div class="content" id="notesContent"></div>
                 </div>
             </div>
         </main>
-
-        <footer>
-            <p>&copy; 2026 br1te0n. Learning made easy. <br> 학습이 쉬워집니다.</p>
-        </footer>
     </div>
 
-    <script>
-        document.getElementById('summarizeBtn').addEventListener('click', function() {
-            const link = document.getElementById('linkInput').value;
-            if(!link) {
-                alert("Please paste a link! / 링크를 입력해 주세요!");
+    <script type="module">
+        // Import Google Generative AI
+        import { GoogleGenerativeAI } from "https://esm.run/@google/genai";
+
+        const summarizeBtn = document.getElementById('summarizeBtn');
+        const notesContent = document.getElementById('notesContent');
+        const loader = document.getElementById('loader');
+        const notesSection = document.getElementById('notesSection');
+
+        summarizeBtn.addEventListener('click', async () => {
+            const key = document.getElementById('apiKey').value;
+            const promptInput = document.getElementById('linkInput').value;
+
+            if (!key || !promptInput) {
+                alert("Please enter both API Key and a Link/Topic!");
                 return;
             }
 
-            document.getElementById('loader').style.display = 'block';
-            document.getElementById('notesSection').style.display = 'none';
+            loader.style.display = 'block';
+            notesSection.style.display = 'none';
 
-            // Fake AI Response for now
-            setTimeout(() => {
-                document.getElementById('loader').style.display = 'none';
-                document.getElementById('notesSection').style.display = 'block';
-                document.getElementById('notesContent').innerHTML = `
-                    <strong>Summary:</strong> This article explains how AI works in simple terms. <br>
-                    <span class="kr-text"><strong>요약:</strong> 이 기사는 인공지능이 어떻게 작동하는지 쉬운 용어로 설명합니다.</span>
-                `;
-            }, 3000);
+            try {
+                const genAI = new GoogleGenerativeAI(key);
+                const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+                const prompt = `You are a student assistant. Summarize the following content or link: ${promptInput}. 
+                Provide the summary in simple English and then in natural Korean. 
+                Use a student-friendly, casual tone. Keep it concise.`;
+
+                const result = await model.generateContent(prompt);
+                const response = await result.response;
+                const text = response.text();
+
+                // Format the text to handle line breaks
+                notesContent.innerHTML = text.replace(/\n/g, '<br>');
+                loader.style.display = 'none';
+                notesSection.style.display = 'block';
+
+            } catch (error) {
+                console.error(error);
+                alert("Error: " + error.message);
+                loader.style.display = 'none';
+            }
         });
     </script>
 </body>
