@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>br1te0n | Smart AI Notes</title>
+    <title>br1te0n | AI Study Assistant</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Gochi+Hand&family=Nanum+Pen+Script&display=swap" rel="stylesheet">
 </head>
@@ -11,78 +11,90 @@
 
     <div class="app-container">
         <header>
+            <div class="ai-status" id="aiStatus">
+                <span class="dot"></span> AI ONLINE
+            </div>
             <h1 class="logo">br1te0n</h1>
-            <p class="slogan">Real-Time AI Study Assistant<br><span class="kr-text">실시간 AI 학습 도우미</span></p>
+            <p class="slogan">Smart Notes, Simplified Study. <br> <span class="kr-text">스마트한 노트, 간편한 학습.</span></p>
         </header>
 
         <main>
-            <div id="setupSection" style="margin-bottom: 20px;">
-                <input type="password" id="apiKey" placeholder="Enter Gemini API Key..." style="width: 100%;">
-                <p style="font-size: 10px; color: #666; margin-top: 5px;">*Your key is stored locally in your browser.</p>
-            </div>
-
             <div class="input-section">
-                <input type="text" id="linkInput" placeholder="Paste link or topic here...">
+                <input type="text" id="linkInput" placeholder="Paste link or topic here... / 링크를 붙여넣으세요...">
                 <button id="summarizeBtn">Generate Notes / 노트 생성</button>
             </div>
 
             <div class="loader" id="loader">
-                <div class="spinner"></div>
-                <p>Gemini is thinking... <br> <span class="kr-text">AI가 분석 중입니다...</span></p>
+                <div class="ai-working-animation">
+                    <div class="brain-icon">🧠</div>
+                    <div class="pulse"></div>
+                </div>
+                <p>AI is reading your link...<br> <span class="kr-text">AI가 링크를 읽고 있습니다...</span></p>
             </div>
 
             <div class="notes-section" id="notesSection">
-                <h2>Notes for You / 당신을 위한 노트:</h2>
+                <h2 id="processingTitle">Study Notes / 학습 노트:</h2>
                 <div class="paper">
                     <div class="lines"></div>
                     <div class="content" id="notesContent"></div>
                 </div>
             </div>
         </main>
+
+        <footer>
+            <p>&copy; 2026 br1te0n. Learning made easy. <br> 학습이 쉬워집니다.</p>
+        </footer>
     </div>
 
     <script type="module">
-        // Import Google Generative AI
         import { GoogleGenerativeAI } from "https://esm.run/@google/genai";
+
+        // API Key imewekwa ndani ya kodi moja kwa moja
+        const API_KEY = "AIzaSyDJqDRLMbXWu3GNPd530drNkBf5C4L6Dk8";
+        const genAI = new GoogleGenerativeAI(API_KEY);
 
         const summarizeBtn = document.getElementById('summarizeBtn');
         const notesContent = document.getElementById('notesContent');
         const loader = document.getElementById('loader');
         const notesSection = document.getElementById('notesSection');
+        const aiStatus = document.getElementById('aiStatus');
 
         summarizeBtn.addEventListener('click', async () => {
-            const key = document.getElementById('apiKey').value;
             const promptInput = document.getElementById('linkInput').value;
 
-            if (!key || !promptInput) {
-                alert("Please enter both API Key and a Link/Topic!");
+            if (!promptInput) {
+                alert("Please paste a link! / 링크를 입력해 주세요!");
                 return;
             }
 
+            // Anza kazi
             loader.style.display = 'block';
             notesSection.style.display = 'none';
+            aiStatus.classList.add('working'); // Badilisha rangi ya status iwe ya kazi
 
             try {
-                const genAI = new GoogleGenerativeAI(key);
                 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-                const prompt = `You are a student assistant. Summarize the following content or link: ${promptInput}. 
-                Provide the summary in simple English and then in natural Korean. 
-                Use a student-friendly, casual tone. Keep it concise.`;
+                const prompt = `You are a professional student assistant. Analyze the content from this source: ${promptInput}. 
+                Provide a structured summary in simple English (bullet points) and then a natural Korean translation. 
+                Use a student-friendly tone like a handwritten note.`;
 
                 const result = await model.generateContent(prompt);
                 const response = await result.response;
                 const text = response.text();
 
-                // Format the text to handle line breaks
+                // Safisha maandishi na yaweke kwenye karatasi
                 notesContent.innerHTML = text.replace(/\n/g, '<br>');
+                
                 loader.style.display = 'none';
                 notesSection.style.display = 'block';
+                aiStatus.classList.remove('working');
 
             } catch (error) {
                 console.error(error);
-                alert("Error: " + error.message);
+                alert("AI Error! Check your connection.");
                 loader.style.display = 'none';
+                aiStatus.classList.remove('working');
             }
         });
     </script>
