@@ -1,0 +1,143 @@
+:root {
+    --deep-blue: #002366;    /* Royal Navy */
+    --ocean-blue: #0056b3;   /* Vivid Blue */
+    --bright-blue: #0096ff;  /* Sky Accent */
+    --soft-blue: #eef6ff;    /* Background */
+    --paper-white: #ffffff;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: var(--soft-blue);
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+.kr-text {
+    font-family: 'Nanum Pen Script', cursive;
+    font-size: 1.4rem;
+    display: block;
+    opacity: 0.9;
+}
+
+.app-container {
+    width: 100%;
+    max-width: 500px;
+    background-color: white;
+    box-shadow: 0 15px 35px rgba(0,35,102,0.15);
+}
+
+header {
+    background: linear-gradient(180deg, var(--deep-blue), var(--ocean-blue));
+    color: white;
+    padding: 40px 20px;
+    text-align: center;
+    border-bottom: 5px solid var(--bright-blue);
+}
+
+.logo {
+    font-size: 3rem;
+    font-weight: 900;
+    text-transform: lowercase;
+    margin-bottom: 10px;
+    letter-spacing: -2px;
+}
+
+.slogan {
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+main {
+    padding: 25px;
+}
+
+.input-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 30px;
+}
+
+input[type="text"] {
+    padding: 18px;
+    border: 2px solid #d1e3ff;
+    border-radius: 15px;
+    outline: none;
+    font-size: 1rem;
+}
+
+input[type="text"]:focus {
+    border-color: var(--bright-blue);
+}
+
+button {
+    padding: 16px;
+    background-color: var(--ocean-blue);
+    color: white;
+    border: none;
+    border-radius: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    background-color: var(--deep-blue);
+    transform: translateY(-2px);
+}
+
+.secondary-btn {
+    background-color: #f0f4f8;
+    color: var(--deep-blue);
+    margin-top: 10px;
+}
+
+/* Paper Style */
+.paper {
+    background: white;
+    border: 1px solid #eee;
+    padding: 30px;
+    position: relative;
+    box-shadow: 5px 5px 0px var(--bright-blue);
+    margin-top: 15px;
+}
+
+.content {
+    font-family: 'Gochi Hand', cursive;
+    font-size: 1.3rem;
+    color: #333;
+    line-height: 1.6;
+}
+
+.loader {
+    display: none;
+    text-align: center;
+    padding: 20px;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid var(--bright-blue);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 10px;
+}
+
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 0.8rem;
+    color: #888;
+}
